@@ -2,11 +2,15 @@ import yaml
 import warnings
 import functools
 import inspect
+import os
 
 
 def load_cfg(path):
     if not isinstance(path, str):
         raise TypeError('Path set incorrect. Expected string - full path to config file')
+
+    if not os.path.isfile(path):
+        raise FileNotFoundError("Config file doesn't exists {}".format(path))
 
     with open(path, 'r') as conf_stream:
         config = yaml.safe_load(conf_stream)

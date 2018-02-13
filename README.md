@@ -2,7 +2,7 @@
 - export PYTHONPATH="$PYTHONPATH:/path_to_myapp/myapp/myapp/"
 
 <b>Windows:</b><br>
-- set PYTHONPATH=%PYTHONPATH%;D:\LocalData\au00681\PycharmProjects\services
+- set PYTHONPATH=%PYTHONPATH%;D:\LocalData\au00681\PycharmProjects\odometer_service
 
 <b>Update requirements:</b><br>
 - добавить название пакета в `requirements.in`
