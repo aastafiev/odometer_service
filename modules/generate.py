@@ -5,7 +5,7 @@ from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from dateutil.tz import tzlocal
 
-from data_transform.odometer.common.common_func import date_range, ClientLastRow, calc_exp_work_type, to_java_date_str
+from modules.common.common_func import date_range, ClientLastRow, calc_exp_work_type, to_java_date_str
 
 
 def generate_gen(client_last_row: ClientLastRow, date_from: datetime = None) -> Iterable[dict]:

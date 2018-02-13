@@ -5,8 +5,8 @@ import json
 from dateutil.parser import parse
 
 import settings as st
-from data_transform.odometer.generate import generate_gen
-from data_transform.odometer.common.common_func import ClientLastRow, to_java_date_str
+from modules.generate import generate_gen
+from modules.common.common_func import ClientLastRow, to_java_date_str
 from utils.utils import ignore_warnings
 
 
@@ -37,7 +37,7 @@ class TestGenerateModel(unittest.TestCase):
         self.assertEqual(source['date_service'], to_java_date_str(parse(target['date_service'])),
                          'Returned data corrupted in date_service value.')
         self.assertTrue(target['odometer'] - 2 <= source['odometer'] <= target['odometer'] + 2,
-                        'Returned data corrupted in odometer value.')
+                        'Returned data corrupted in service value.')
         self.assertEqual(source['exp_work_type'], target['exp_work_type'],
                          'Returned data corrupted in exp_work_type value.')
 

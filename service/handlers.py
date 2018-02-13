@@ -5,9 +5,9 @@ from aiohttp import web
 from schema import SchemaError
 from dateutil.parser import parse
 
-from data_transform.odometer.interpolation import interpolate_gen
-from data_transform.odometer.generate import generate_gen
-from data_transform.odometer.common.common_func import ClientLastRow
+from modules.interpolation import interpolate_gen
+from modules.generate import generate_gen
+from modules.common.common_func import ClientLastRow
 
 
 async def handle_interpolate(request):

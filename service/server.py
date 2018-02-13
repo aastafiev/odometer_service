@@ -13,10 +13,10 @@ import settings as st
 from common.middlewares import error_middleware
 from utils.utils import load_cfg
 
-from data_services.odometer.handlers import handle_interpolate, handle_generate
+from service.handlers import handle_interpolate, handle_generate
 
 
-SERVICE_CONFIG = load_cfg(os.path.join(st.PROJECT_DIR, 'data_services', 'odometer', 'etc', 'config.yml'))
+SERVICE_CONFIG = load_cfg(os.path.join(st.PROJECT_DIR, 'service', 'etc', 'config.yml'))
 DEFAULT_LOG_FORMAT = '[%(levelname)1.1s %(asctime)s %(name)s %(module)s:%(lineno)d] %(message)s'
 
 

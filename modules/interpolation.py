@@ -9,7 +9,7 @@ from typing import Iterable
 from collections import OrderedDict, defaultdict
 import numpy as np
 
-from data_transform.odometer.common.common_func import calc_exp_work_type, filter_x_y, interpolate_raw, date_range
+from modules.common.common_func import calc_exp_work_type, filter_x_y, interpolate_raw, date_range
 
 
 def interpolate_gen(client_data: OrderedDict, months_mean_lag: int,

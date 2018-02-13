@@ -3,10 +3,10 @@
 
 import unittest
 
-from data_transform.odometer.utests.test_InterpolationModel import TestInterpolationModel
-from data_services.odometer.utests.test_InterpolationModel_rest_api import TestInterpolationModelRestAPI
-from data_transform.odometer.utests.test_GenerateModel import TestGenerateModel
-from data_services.odometer.utests.test_GenerateModel_rest_api import TestGenerateModelRestAPI
+from modules.utests.test_InterpolationModel import TestInterpolationModel
+from service.utests.test_InterpolationModel_rest_api import TestInterpolationModelRestAPI
+from modules.utests.test_GenerateModel import TestGenerateModel
+from service.utests.test_GenerateModel_rest_api import TestGenerateModelRestAPI
 
 
 def test_suite():

@@ -9,7 +9,7 @@ from dateutil.tz import tzlocal
 import itertools
 
 import settings as st
-from data_transform.odometer.interpolation import interpolate_gen
+from modules.interpolation import interpolate_gen
 from utils.utils import ignore_warnings
 
 
@@ -46,7 +46,7 @@ class TestInterpolationModel(unittest.TestCase):
         self.assertEqual(source['exp_work_type'], target['exp_work_type'],
                          'Returned data corrupted in exp_work_type value.')
         self.assertTrue(target['odometer'] - 2 <= source['odometer'] <= target['odometer'] + 2,
-                        'Returned data corrupted in odometer value.')
+                        'Returned data corrupted in service value.')
         if source['km']:
             self.assertTrue(target['km'] - 2 <= source['km'] <= target['km'] + 2,
                             'Returned data corrupted in km value')
