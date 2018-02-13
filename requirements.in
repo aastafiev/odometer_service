@@ -1,0 +1,6 @@
+aiohttp
+numpy
+PyYAML
+schema
+scipy
+python-dateutil
