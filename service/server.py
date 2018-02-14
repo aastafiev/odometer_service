@@ -26,6 +26,11 @@ async def on_startup(app):
 
 
 async def on_cleanup(app):
+    app.loop.shutdown_asyncgens()
+    pass
+
+
+async def on_shutdown(app):
     pass
 
 
@@ -56,6 +61,7 @@ def get_app(val_request: bool = False):
 
     app.on_startup.append(on_startup)
     app.on_cleanup.append(on_cleanup)
+    app.on_shutdown.append(on_shutdown)
 
     return add_routes(app)
 
@@ -64,17 +70,16 @@ if __name__ == '__main__':
     logging.basicConfig(level=logging.getLevelName(SERVICE_CONFIG['other']['log_level'].upper()),
                         format=DEFAULT_LOG_FORMAT)
 
-    loop = asyncio.get_event_loop()
+    # loop = asyncio.get_event_loop()
     try:
         if len(sys.argv) > 1:
             SERVICE_CONFIG = load_cfg(os.path.abspath(sys.argv[1]))
 
         web.run_app(get_app(),
                     host=SERVICE_CONFIG['service']['host'],
-                    port=SERVICE_CONFIG['service']['port'],
-                    loop=loop)
+                    port=SERVICE_CONFIG['service']['port'])
     except FileNotFoundError as err:
         sys.exit(str(err))
-    finally:
-        loop.run_until_complete(loop.shutdown_asyncgens())
-        loop.close()
+    # finally:
+    #     loop.run_until_complete(loop.shutdown_asyncgens())
+    #     loop.close()

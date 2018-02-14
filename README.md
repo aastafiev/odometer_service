@@ -6,6 +6,7 @@
 
 <b>Update requirements:</b><br>
 - добавить название пакета в `requirements.in`
+- выполнить команду `pip-compile --upgrade`
 - выполнить команду `pip-compile --output-file requirements.txt requirements.in`
 для автоматического обновления файла `requirements.txt`
 - выполнить `pip-sync` для установки новых зависимостей

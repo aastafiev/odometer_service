@@ -2,6 +2,6 @@ service:
   host: localhost
   port: 8083
 other:
-  log_level: info
+  log_level: debug
   months_data_lag: -12
   months_mean_lag: -3
