@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import asyncio
 import logging
 import os
 import sys
@@ -70,7 +69,6 @@ if __name__ == '__main__':
     logging.basicConfig(level=logging.getLevelName(SERVICE_CONFIG['other']['log_level'].upper()),
                         format=DEFAULT_LOG_FORMAT)
 
-    # loop = asyncio.get_event_loop()
     try:
         if len(sys.argv) > 1:
             SERVICE_CONFIG = load_cfg(os.path.abspath(sys.argv[1]))
@@ -80,6 +78,3 @@ if __name__ == '__main__':
                     port=SERVICE_CONFIG['service']['port'])
     except FileNotFoundError as err:
         sys.exit(str(err))
-    # finally:
-    #     loop.run_until_complete(loop.shutdown_asyncgens())
-    #     loop.close()

@@ -74,4 +74,4 @@ class ClientLastRow(NamedTuple):
 
     def __repr__(self) -> str:
         return f'<ClientLastRow client_name={self.client_name}, vin={self.vin}>, model={self.model},' \
-               f' date_service={self.date_service}, service={self.service}, day_mean_km={self.day_mean_km}'
+               f' date_service={self.date_service}, odometer={self.odometer}, day_mean_km={self.day_mean_km}'

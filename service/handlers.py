@@ -31,10 +31,14 @@ async def handle_interpolate(request):
     request.app.logger.debug('Got client: {client_name}, vin: {vin}'.format(**row))
     max_interp_date = parse(row['max_interp_date']) if row['max_interp_date'] else None
 
-    ret = list(interpolate_gen(client_data,
-                               months_mean_lag=request.app['months_mean_lag'],
-                               max_interp_date=max_interp_date,
-                               months_data_lag=request.app['months_data_lag']))
+    # ret = list(interpolate_gen(client_data,
+    #                            months_mean_lag=request.app['months_mean_lag'],
+    #                            max_interp_date=max_interp_date,
+    #                            months_data_lag=request.app['months_data_lag']))
+    ret = [res async for res in interpolate_gen(client_data,
+                                                months_mean_lag=request.app['months_mean_lag'],
+                                                max_interp_date=max_interp_date,
+                                                months_data_lag=request.app['months_data_lag'])]
 
     return ret if ret else 'no relevant data or no new visits by client (max_interp_date == max_date_window)'
 
@@ -57,7 +61,7 @@ async def handle_generate(request):
         day_mean_km=client_request['day_mean_km']
     )
 
-    ret = [res for res in generate_gen(client_data,
-                                       parse(client_request['date_from']) if client_request['date_from'] else None)
-           if res['exp_work_type']]
+    ret = [res async for res in generate_gen(client_data,
+                                             parse(client_request['date_from']) if client_request['date_from']
+                                             else None) if res['exp_work_type']]
     return ret if ret else 'no data with next exp_work_type'

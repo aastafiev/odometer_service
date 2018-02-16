@@ -1,4 +1,5 @@
 import unittest
+import asyncio
 
 import os
 import json
@@ -10,7 +11,6 @@ import itertools
 
 import settings as st
 from modules.interpolation import interpolate_gen
-from utils.utils import ignore_warnings
 
 
 class TestInterpolationModel(unittest.TestCase):
@@ -53,22 +53,31 @@ class TestInterpolationModel(unittest.TestCase):
         else:
             self.assertEqual(target['km'], source['km'], 'Returned data corrupted in km value')
 
-    @ignore_warnings
     def test_interpolation(self):
-        def check_by_date(v):
-            return datetime.strptime(v['date_service'], '%Y-%m-%dT%H:%M:%S') < max_interp_data
+        async def _test_interpolation():
+            def check_by_date(v):
+                return datetime.strptime(v['date_service'], '%Y-%m-%dT%H:%M:%S') < max_interp_data
 
-        for res_row, control_row in zip(interpolate_gen(self.client_data,
-                                                        months_mean_lag=-3,
-                                                        months_data_lag=-24),
-                                        self.expected_values):
-            self.check_values(res_row, control_row)
+            res_rows = [res async for res in interpolate_gen(self.client_data,
+                                                             months_mean_lag=-3,
+                                                             months_data_lag=-24)]
+            for res_row, control_row in zip(res_rows, self.expected_values):
+                self.check_values(res_row, control_row)
 
-        max_interp_data = datetime.strptime('2017-05-25T00:00:00', '%Y-%m-%dT%H:%M:%S')
-        with_max_interp_date = interpolate_gen(self.client_data,
-                                               months_mean_lag=-3,
-                                               max_interp_date=max_interp_data)
-        new_expected_values = itertools.filterfalse(check_by_date, self.expected_values)
+            max_interp_data = datetime.strptime('2017-05-25T00:00:00', '%Y-%m-%dT%H:%M:%S')
+            with_max_interp_date = [res async for res in interpolate_gen(self.client_data,
+                                                                         months_mean_lag=-3,
+                                                                         max_interp_date=max_interp_data)]
+            new_expected_values = itertools.filterfalse(check_by_date, self.expected_values)
 
-        for res_row, control_row in zip(with_max_interp_date, new_expected_values):
-            self.check_values(res_row, control_row)
+            for res_row, control_row in zip(with_max_interp_date, new_expected_values):
+                self.check_values(res_row, control_row)
+
+        event_loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(event_loop)
+        try:
+            coro = asyncio.coroutine(_test_interpolation)
+            event_loop.run_until_complete(coro())
+        finally:
+            event_loop.run_until_complete(event_loop.shutdown_asyncgens())
+            event_loop.close()

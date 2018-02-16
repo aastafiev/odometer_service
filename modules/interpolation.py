@@ -5,15 +5,15 @@ from dateutil.parser import parse
 from dateutil.tz import tzlocal
 from dateutil.relativedelta import relativedelta
 from statistics import mode, StatisticsError
-from typing import Iterable
+from typing import AsyncIterable
 from collections import OrderedDict, defaultdict
 import numpy as np
 
 from modules.common.common_func import calc_exp_work_type, filter_x_y, interpolate_raw, date_range
 
 
-def interpolate_gen(client_data: OrderedDict, months_mean_lag: int,
-                    max_interp_date: datetime = None, months_data_lag: int = -3) -> Iterable[dict]:
+async def interpolate_gen(client_data: OrderedDict, months_mean_lag: int,
+                          max_interp_date: datetime = None, months_data_lag: int = -3) -> AsyncIterable[dict]:
     def first(s):
         """Return the first element from an ordered collection
            or an arbitrary element from an unordered collection.

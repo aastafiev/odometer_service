@@ -1,4 +1,5 @@
 import unittest
+import asyncio
 
 import os
 import json
@@ -7,7 +8,6 @@ from dateutil.parser import parse
 import settings as st
 from modules.generate import generate_gen
 from modules.common.common_func import ClientLastRow, to_java_date_str
-from utils.utils import ignore_warnings
 
 
 class TestGenerateModel(unittest.TestCase):
@@ -41,8 +41,18 @@ class TestGenerateModel(unittest.TestCase):
         self.assertEqual(source['exp_work_type'], target['exp_work_type'],
                          'Returned data corrupted in exp_work_type value.')
 
-    @ignore_warnings
     def test_generate(self):
-        for res_row, control_row in zip(generate_gen(self.test_source, parse('2017-11-01T00:00:00+0300')),
-                                        self.expected_values):
-            self.check_values(res_row, control_row)
+        async def _test_generate():
+            res_rows = [res async for res in generate_gen(self.test_source, parse('2017-11-01T00:00:00+0300'))]
+            for res_row, control_row in zip(res_rows, self.expected_values):
+                self.check_values(res_row, control_row)
+
+        event_loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(event_loop)
+        try:
+            coro = asyncio.coroutine(_test_generate)
+            event_loop.run_until_complete(coro())
+        finally:
+            event_loop.run_until_complete(event_loop.shutdown_asyncgens())
+            event_loop.close()
+
