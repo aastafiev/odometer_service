@@ -25,7 +25,6 @@ async def on_startup(app):
 
 
 async def on_cleanup(app):
-    app.loop.shutdown_asyncgens()
     pass
 
 
