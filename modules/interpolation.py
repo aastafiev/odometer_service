@@ -48,11 +48,12 @@ async def interpolate_gen(client_data: OrderedDict, months_mean_lag: int,
     date_for_mean = date_for_mean if date_for_mean >= min_date_cl else min_date_cl
 
     if min_date_window < max_date_window:
-        model, model_mode = (value['model'] for _, value in client_data.items()), None
+        model, model_mode = tuple(value['model'] for _, value in client_data.items()), None
         try:
             model_mode = mode(model)
         except StatisticsError as serr:
             model_mode = None if str(serr) == 'no mode for empty data' else first(model)
+            pass
 
         x = tuple()
         x_new = tuple()
