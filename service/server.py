@@ -55,6 +55,7 @@ def get_app(val_request: bool = False):
                                                  "date_service": str,
                                                  "odometer": int,
                                                  "day_mean_km": int,
+                                                 "exp_work_type": str,
                                                  "date_from": Or(None, str)})
 
     app.on_startup.append(on_startup)

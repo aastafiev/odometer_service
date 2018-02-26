@@ -26,7 +26,8 @@ class TestGenerateModel(unittest.TestCase):
             model=source['model'],
             date_service=parse(source['date_service']),
             odometer=source['odometer'],
-            day_mean_km=source['day_mean_km']
+            day_mean_km=source['day_mean_km'],
+            exp_work_type=source['exp_work_type']
         )
 
     def check_values(self, source, target):
