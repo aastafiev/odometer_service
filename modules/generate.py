@@ -14,7 +14,13 @@ async def generate_gen(client_last_row: local_funcs.ClientLastRow, date_from: da
 
     local_tz = tzlocal()
     today = datetime.now(local_tz).replace(hour=0, minute=0, second=0, microsecond=0)
-    date_from = today if not date_from else date_from
+    if not date_from:
+        if (today - client_last_row.date_service).days > 31:
+            date_from = today
+        else:
+            yield None
+            return
+
     date_to = date_from + relativedelta(day=31) if 1 <= date_from.day <= 10 else date_from + relativedelta(months=1,
                                                                                                            day=31)
 
