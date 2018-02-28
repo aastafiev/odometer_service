@@ -10,6 +10,14 @@ def to_java_date_str(date: datetime) -> str:
     return "{}.{:03.0f}".format(date.strftime('%Y/%m/%d %H:%M:%S'), date.microsecond / 1000)
 
 
+def relevance_of_exp_work_type(prev_exp_work_type: str, check_exp_work_type: str):
+    exclude_mapping = {'M-40': 'M-45',
+                       'M-70': 'M-75',
+                       'M-100': 'M-105',
+                       'M-130': 'M-135'}
+    return False if exclude_mapping.get(prev_exp_work_type) == check_exp_work_type else True
+
+
 def calc_exp_work_type(value: int):
     work_types = {'M-15': (12000, 18000),
                   'M-30': (28000, 32000),

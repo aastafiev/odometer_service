@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 
-from typing import AsyncIterable
 from datetime import datetime
+from typing import AsyncIterable
+
 from dateutil.relativedelta import relativedelta
 from dateutil.tz import tzlocal
 
-from modules.common.common_func import date_range, ClientLastRow, calc_exp_work_type, to_java_date_str
+from modules.common.common_func import date_range, ClientLastRow, calc_exp_work_type, to_java_date_str, relevance_of_exp_work_type
 
 
 async def generate_gen(client_last_row: ClientLastRow, date_from: datetime = None) -> AsyncIterable[dict]:
@@ -32,7 +33,8 @@ async def generate_gen(client_last_row: ClientLastRow, date_from: datetime = Non
         new_odometer = client_last_row.odometer + _n * client_last_row.day_mean_km
         new_exp_work_type = calc_exp_work_type(new_odometer)
         if day >= date_from and new_exp_work_type and \
-                (new_exp_work_type != client_last_row.exp_work_type or not client_last_row.exp_work_type):
+                new_exp_work_type != client_last_row.exp_work_type and \
+                relevance_of_exp_work_type(client_last_row.exp_work_type, new_exp_work_type):
             yield {'client_name': client_last_row.client_name, 'vin': client_last_row.vin,
                    'model': client_last_row.model, 'date_service': to_java_date_str(day),
                    'odometer': new_odometer, 'exp_work_type': calc_exp_work_type(new_odometer)}
