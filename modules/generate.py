@@ -12,9 +12,16 @@ async def generate_gen(client_last_row: ClientLastRow, date_from: datetime = Non
     assert client_last_row, 'client data empty'
 
     local_tz = tzlocal()
-    date_from = datetime.now(local_tz) if not date_from else date_from
+    today = datetime.now(local_tz).replace(hour=0, minute=0, second=0, microsecond=0)
+    date_from = today if not date_from else date_from
     date_to = date_from + relativedelta(day=31) if 1 <= date_from.day <= 10 else date_from + relativedelta(months=1,
                                                                                                            day=31)
+
+    difference_in_years = (date_to - today).days / 365
+    if difference_in_years >= 1:
+        yield {'client_name': client_last_row.client_name, 'vin': client_last_row.vin,
+               'model': client_last_row.model, 'date_service': to_java_date_str(date_to),
+               'odometer': None, 'exp_work_type': 'year expired: {:.3f}'.format(difference_in_years)}
 
     if not date_to.tzinfo:
         date_to = date_to.replace(tzinfo=local_tz)
