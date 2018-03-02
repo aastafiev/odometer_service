@@ -37,10 +37,15 @@ async def generate_gen(client_last_row: local_funcs.ClientLastRow, date_from: da
     next(generated_days)
     for _n, day in enumerate(generated_days, 1):
         new_odometer = client_last_row.odometer + _n * client_last_row.day_mean_km
-        new_exp_work_type = local_funcs.calc_exp_work_type(new_odometer)
-        if day >= date_from and new_exp_work_type and \
-                new_exp_work_type != client_last_row.exp_work_type and \
-                local_funcs.relevance_of_exp_work_type(client_last_row.exp_work_type, new_exp_work_type):
+        new_exp_work_type = local_funcs.calc_exp_work_type(new_odometer, client_last_row.service_period)
+        if day >= date_from and new_exp_work_type and new_exp_work_type != client_last_row.exp_work_type:
             yield {'client_name': client_last_row.client_name, 'vin': client_last_row.vin,
                    'model': client_last_row.model, 'date_service': local_funcs.to_java_date_str(day),
-                   'odometer': new_odometer, 'exp_work_type': local_funcs.calc_exp_work_type(new_odometer)}
+                   'odometer': new_odometer, 'exp_work_type': new_exp_work_type}
+
+        # if day >= date_from and new_exp_work_type and \
+        #         new_exp_work_type != client_last_row.exp_work_type and \
+        #         local_funcs.relevance_of_exp_work_type(client_last_row.exp_work_type, new_exp_work_type):
+        #     yield {'client_name': client_last_row.client_name, 'vin': client_last_row.vin,
+        #            'model': client_last_row.model, 'date_service': local_funcs.to_java_date_str(day),
+        #            'odometer': new_odometer, 'exp_work_type': local_funcs.calc_exp_work_type(new_odometer)}

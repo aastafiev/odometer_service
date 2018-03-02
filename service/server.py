@@ -48,7 +48,8 @@ def get_app(val_request: bool = False):
                                                 "model": str,
                                                 "date_service": str,
                                                 "max_interp_date": Or(None, str),
-                                                "odometer": Or(None, int)}])
+                                                "odometer": Or(None, int),
+                                                "service_period": Or(None, int)}])
         app['request_schema_generate'] = Schema({"client_name": str,
                                                  "vin": str,
                                                  "model": str,
@@ -56,7 +57,8 @@ def get_app(val_request: bool = False):
                                                  "odometer": int,
                                                  "day_mean_km": int,
                                                  "exp_work_type": str,
-                                                 "date_from": Or(None, str)})
+                                                 "date_from": Or(None, str),
+                                                 "service_period": Or(None, int)})
 
     app.on_startup.append(on_startup)
     app.on_cleanup.append(on_cleanup)

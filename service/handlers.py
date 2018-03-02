@@ -24,6 +24,7 @@ async def handle_interpolate(request):
         client_data[parse(row['date_service']).date().isoformat()] = {'client_name': row['client_name'],
                                                                       'vin': row['vin'],
                                                                       'model': row['model'],
+                                                                      'service_period': row['service_period'],
                                                                       'odometer': row['odometer'] if row['odometer']
                                                                       else 0,
                                                                       'presence': 1}

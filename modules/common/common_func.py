@@ -18,27 +18,38 @@ def relevance_of_exp_work_type(prev_exp_work_type: str, check_exp_work_type: str
     return False if exclude_mapping.get(prev_exp_work_type) == check_exp_work_type else True
 
 
-def calc_exp_work_type(value: int):
-    work_types = {'M-15': (12000, 18000),
-                  'M-30': (28000, 32000),
-                  'M-40': (39000, 41000),
-                  'M-45': (43500, 48500),
-                  'M-50': (49000, 51000),
-                  'M-60': (58000, 62000),
-                  'M-70': (69000, 71500),
-                  'M-75': (73000, 77500),
-                  'M-80': (79000, 81000),
-                  'M-90': (88500, 92000),
-                  'M-100': (99000, 101500),
-                  'M-105': (103500, 107000),
-                  'M-110': (109000, 111000),
-                  'M-120': (119000, 121500),
-                  'M-130': (129000, 131500),
-                  'M-135': (134000, 138000),
-                  'M-140': (139000, 142000),
-                  'M-150': (148000, 152500)}
+def calc_exp_work_type(value: int, service_period: int):
+    service_period = 15 if not service_period else service_period
+    work_types = {10: {'M-10': (9000, 12000),
+                       'M-20': (18000, 22000),
+                       'M-30': (28000, 32000),
+                       'M-40': (38500, 39000),
+                       'M-50': (49000, 51000),
+                       'M-60': (58000, 62000),
+                       'M-70': (69000, 71500),
+                       'M-80': (79000, 81000),
+                       'M-90': (88500, 92000),
+                       'M-100': (99000, 101500),
+                       'M-110': (109000, 111000),
+                       'M-120': (119000, 121500),
+                       'M-130': (129000, 131500),
+                       'M-140': (139000, 142000),
+                       'M-150': (148000, 152500)},
+                  15: {'M-15': (12000, 18000),
+                       'M-30': (28000, 32000),
+                       'M-45': (43500, 48500),
+                       'M-60': (58000, 62000),
+                       'M-75': (73000, 77500),
+                       'M-90': (88500, 92000),
+                       'M-105': (103500, 107000),
+                       'M-120': (119000, 121500),
+                       'M-135': (134000, 138000),
+                       'M-150': (148000, 152500)}
+                  }
 
-    for key, (segment_start, segment_end) in work_types.items():
+    assert service_period in work_types
+
+    for key, (segment_start, segment_end) in work_types[service_period].items():
         if segment_start <= value <= segment_end:
             return key
 
@@ -81,8 +92,9 @@ class ClientLastRow(NamedTuple):
     odometer: int
     day_mean_km: int
     exp_work_type: str
+    service_period: int
 
     def __repr__(self) -> str:
         return f'<ClientLastRow client_name={self.client_name}, vin={self.vin}>, model={self.model},' \
                f' date_service={self.date_service}, odometer={self.odometer}, day_mean_km={self.day_mean_km},' \
-               f' date_service={self.exp_work_type}'
+               f' date_service={self.exp_work_type}, date_service={self.service_period}'

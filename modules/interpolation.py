@@ -43,6 +43,7 @@ async def interpolate_gen(client_data: OrderedDict, months_mean_lag: int,
     key_cl = first(client_data)
     client_name = client_data[key_cl]['client_name']
     vin = client_data[key_cl]['vin']
+    service_period = client_data[key_cl]['service_period']
     min_date_cl = parse(key_cl).replace(tzinfo=local_tz)
     min_date_window = min_date_window if min_date_window >= min_date_cl else min_date_cl
     date_for_mean = date_for_mean if date_for_mean >= min_date_cl else min_date_cl
@@ -83,12 +84,13 @@ async def interpolate_gen(client_data: OrderedDict, months_mean_lag: int,
             for i, (x_key, map_date) in enumerate(date_mapper.items(), 1):
                 new_odometer = int(round(y_new_arr[x_key - 1], 0))
                 km = int(round(km_arr[x_key - 1], 0)) if km_arr[x_key - 1] != -1 else None
-                exp_work_type = calc_exp_work_type(new_odometer)
+                exp_work_type = calc_exp_work_type(new_odometer, service_period)
                 if map_date in client_data:
                     row = client_data[map_date]
                     row['model'] = model_mode
                     row['date_service'] = parse(map_date).replace(tzinfo=local_tz).astimezone().isoformat()
                     row['odometer'] = new_odometer
+                    row['service_period'] = service_period
                     row['km'] = km
                     row['exp_work_type'] = exp_work_type
                     row['day_mean_km'] = None if i != length else day_mean_km
@@ -96,4 +98,5 @@ async def interpolate_gen(client_data: OrderedDict, months_mean_lag: int,
                 else:
                     yield {'client_name': client_name, 'vin': vin, 'model': model_mode, 'presence': 0,
                            'date_service': parse(map_date).replace(tzinfo=local_tz).astimezone().isoformat(),
-                           'odometer': new_odometer, 'km': km, 'day_mean_km': None, 'exp_work_type': exp_work_type}
+                           'odometer': new_odometer, 'km': km, 'day_mean_km': None,
+                           'exp_work_type': exp_work_type, 'service_period': service_period}
