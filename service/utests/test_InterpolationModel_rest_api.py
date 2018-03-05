@@ -21,7 +21,8 @@ class TestInterpolationModelRestAPI(AioHTTPTestCase):
                                           "date_service": str,
                                           "km": Or(None, int),
                                           'day_mean_km': Or(None, int),
-                                          "exp_work_type": Or(None, str)}])
+                                          "exp_work_type": Or(None, str),
+                                          "service_period": int}])
 
     async def get_application(self):
         return get_my_app(val_request=True)

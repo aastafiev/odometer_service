@@ -22,7 +22,7 @@ class TestInterpolationModel(unittest.TestCase):
         with open(test_rows_path, 'r') as jin1, open(test_out_path, 'r') as jin2:
             test_rows = json.load(jin1)
             self.expected_values = sorted(json.load(jin2),
-                                          key=lambda x: datetime.strptime(x['date_service'], '%Y-%m-%dT%H:%M:%S'))
+                                          key=lambda x: parse(x['date_service']))
 
         self.client_data = OrderedDict()
         for row in test_rows:
@@ -31,10 +31,10 @@ class TestInterpolationModel(unittest.TestCase):
                                      'vin': row['vin'],
                                      'model': row['model'],
                                      'odometer': row['odometer'] if row['odometer'] else 0,
+                                     'service_period': row['service_period'],
                                      'presence': 1}
 
     def check_values(self, source, target):
-        local_tz = tzlocal()
         self.assertIsInstance(source, dict,
                               'The data model returns wrong output type. Expected <list> of <dicts>.')
         self.assertEqual(source['client_name'], target['client_name'],
@@ -42,7 +42,7 @@ class TestInterpolationModel(unittest.TestCase):
         self.assertEqual(source['vin'], target['vin'], 'Returned data corrupted in vin value.')
         self.assertEqual(source['model'], target['model'], 'Returned data corrupted in model value.')
         self.assertEqual(parse(source['date_service']),
-                         parse(target['date_service']).replace(tzinfo=local_tz),
+                         parse(target['date_service']),
                          'Returned data corrupted in date_service value.')
         self.assertEqual(source['presence'], target['presence'], 'Returned data corrupted in presence value.')
         self.assertEqual(source['exp_work_type'], target['exp_work_type'],
@@ -58,7 +58,7 @@ class TestInterpolationModel(unittest.TestCase):
     def test_interpolation(self):
         async def _test_interpolation():
             def check_by_date(v):
-                return datetime.strptime(v['date_service'], '%Y-%m-%dT%H:%M:%S') < max_interp_data
+                return parse(v['date_service']) < max_interp_data
 
             res_rows = [res async for res in interpolate_gen(self.client_data,
                                                              months_mean_lag=-3,
@@ -66,7 +66,7 @@ class TestInterpolationModel(unittest.TestCase):
             for res_row, control_row in zip(res_rows, self.expected_values):
                 self.check_values(res_row, control_row)
 
-            max_interp_data = datetime.strptime('2017-05-25T00:00:00', '%Y-%m-%dT%H:%M:%S')
+            max_interp_data = parse('2017-05-25T00:00:00+03:00')
             with_max_interp_date = [res async for res in interpolate_gen(self.client_data,
                                                                          months_mean_lag=-3,
                                                                          max_interp_date=max_interp_data)]

@@ -56,7 +56,8 @@ async def handle_generate(request):
         date_service=parse(client_request['date_service']),
         odometer=client_request['odometer'],
         day_mean_km=client_request['day_mean_km'],
-        exp_work_type=client_request['exp_work_type']
+        exp_work_type=client_request['exp_work_type'],
+        service_period=client_request['service_period']
     )
 
     ret = [res async for res in generate_gen(client_data,
