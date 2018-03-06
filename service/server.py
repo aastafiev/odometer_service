@@ -12,7 +12,7 @@ import settings as st
 from common.middlewares import error_middleware
 from utils.utils import load_cfg
 
-from service.handlers import handle_interpolate, handle_generate
+from service.handlers import handle_interpolate, handle_generate, handle_version
 
 
 SERVICE_CONFIG = load_cfg(os.path.join(st.PROJECT_DIR, 'service', 'etc', 'config.yml'))
@@ -35,6 +35,7 @@ async def on_shutdown(app):
 def add_routes(app):
     app.router.add_post('/interpolation', handle_interpolate)
     app.router.add_post('/generate', handle_generate)
+    app.router.add_get('/version', handle_version)
     return app
 
 
@@ -42,6 +43,7 @@ def get_app(val_request: bool = False):
     app = web.Application(middlewares=[error_middleware], debug=True)
 
     app['validate_request'] = val_request
+    app['__version__'] = st.__version__
     if val_request:
         app['request_schema_interp'] = Schema({"data": [{"client_name": str,
                                                          "vin": str,
@@ -64,10 +66,12 @@ def get_app(val_request: bool = False):
     app.on_cleanup.append(on_cleanup)
     app.on_shutdown.append(on_shutdown)
 
+    app.logger.info('Odometer service version: {}'.format(app['__version__']))
     return add_routes(app)
 
 
 if __name__ == '__main__':
+    logging.getLogger('asyncio').setLevel(logging.INFO)
     logging.basicConfig(level=logging.getLevelName(SERVICE_CONFIG['other']['log_level'].upper()),
                         format=DEFAULT_LOG_FORMAT)
 

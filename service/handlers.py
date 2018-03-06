@@ -10,6 +10,10 @@ from modules.generate import generate_gen
 from modules.common.common_func import ClientLastRow
 
 
+async def handle_version(request):
+    return request.app['__version__']
+
+
 async def handle_interpolate(request):
     client_request = await request.json()
 
