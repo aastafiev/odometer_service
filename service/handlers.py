@@ -20,7 +20,7 @@ async def handle_interpolate(request):
         raise web.HTTPBadRequest(reason='Wrong request! {}'.format(se))
 
     client_data, row = OrderedDict(), None
-    for row in client_request:
+    for row in client_request['data']:
         client_data[parse(row['date_service']).date().isoformat()] = {'client_name': row['client_name'],
                                                                       'vin': row['vin'],
                                                                       'model': row['model'],
@@ -32,12 +32,13 @@ async def handle_interpolate(request):
     request.app.logger.debug('Got client: {client_name}, vin: {vin}'.format(**row))
     max_interp_date = parse(row['max_interp_date']) if row['max_interp_date'] else None
 
-    ret = [res async for res in interpolate_gen(client_data,
-                                                months_mean_lag=request.app['months_mean_lag'],
-                                                max_interp_date=max_interp_date,
-                                                months_data_lag=request.app['months_data_lag'])]
+    response = {"data": [res async for res in interpolate_gen(client_data,
+                                                              months_mean_lag=request.app['months_mean_lag'],
+                                                              max_interp_date=max_interp_date,
+                                                              months_data_lag=request.app['months_data_lag'])]}
 
-    return ret if ret else 'no relevant data or no new visits by client (max_interp_date == max_date_window)'
+    return response if response['data'] else 'no relevant data or no new visits by client (max_interp_date == ' \
+                                             'max_date_window) '
 
 
 async def handle_generate(request):
@@ -60,7 +61,8 @@ async def handle_generate(request):
         service_period=client_request['service_period']
     )
 
-    ret = [res async for res in generate_gen(client_data,
-                                             parse(client_request['date_from']) if client_request['date_from']
-                                             else None) if res['exp_work_type']]
-    return ret if ret else 'no data with next exp_work_type'
+    response = {"data": [res async for res in
+                         generate_gen(client_data,
+                                      parse(client_request['date_from']) if client_request['date_from']
+                                      else None) if res['exp_work_type']]}
+    return response if response['data'] else 'no data with next exp_work_type'

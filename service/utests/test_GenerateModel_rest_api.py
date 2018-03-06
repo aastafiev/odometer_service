@@ -13,12 +13,12 @@ class TestGenerateModelRestAPI(AioHTTPTestCase):
         with open(os.path.join(st.PROJECT_DIR, 'utests', 'data', 'valid_GenerateModel_request.json'), 'r') as fin:
             self.valid_request = json.load(fin)
 
-        self.__response_schema = Schema([{"client_name": str,
-                                          "vin": str,
-                                          "model": str,
-                                          "date_service": str,
-                                          "odometer": int,
-                                          "exp_work_type": str}])
+        self.__response_schema = Schema({"data": [{"client_name": str,
+                                                   "vin": str,
+                                                   "model": str,
+                                                   "date_service": str,
+                                                   "odometer": int,
+                                                   "exp_work_type": str}]})
 
     async def get_application(self):
         return get_my_app(val_request=True)

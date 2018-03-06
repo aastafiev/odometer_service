@@ -13,16 +13,16 @@ class TestInterpolationModelRestAPI(AioHTTPTestCase):
         with open(os.path.join(st.PROJECT_DIR, 'utests', 'data', 'valid_InterpolationModel_request.json'), 'r') as fin:
             self.valid_request = json.load(fin)
 
-        self.__response_schema = Schema([{"client_name": str,
-                                          "vin": str,
-                                          "model": str,
-                                          "odometer": int,
-                                          "presence": int,
-                                          "date_service": str,
-                                          "km": Or(None, int),
-                                          'day_mean_km': Or(None, int),
-                                          "exp_work_type": Or(None, str),
-                                          "service_period": int}])
+        self.__response_schema = Schema({"data": [{"client_name": str,
+                                                   "vin": str,
+                                                   "model": str,
+                                                   "odometer": int,
+                                                   "presence": int,
+                                                   "date_service": str,
+                                                   "km": Or(None, int),
+                                                   'day_mean_km': Or(None, int),
+                                                   "exp_work_type": Or(None, str),
+                                                   "service_period": int}]})
 
     async def get_application(self):
         return get_my_app(val_request=True)

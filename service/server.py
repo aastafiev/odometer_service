@@ -43,13 +43,13 @@ def get_app(val_request: bool = False):
 
     app['validate_request'] = val_request
     if val_request:
-        app['request_schema_interp'] = Schema([{"client_name": str,
-                                                "vin": str,
-                                                "model": str,
-                                                "date_service": str,
-                                                "max_interp_date": Or(None, str),
-                                                "odometer": Or(None, int),
-                                                "service_period": int}])
+        app['request_schema_interp'] = Schema({"data": [{"client_name": str,
+                                                         "vin": str,
+                                                         "model": str,
+                                                         "date_service": str,
+                                                         "max_interp_date": Or(None, str),
+                                                         "odometer": Or(None, int),
+                                                         "service_period": int}]})
         app['request_schema_generate'] = Schema({"client_name": str,
                                                  "vin": str,
                                                  "model": str,
