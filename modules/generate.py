@@ -28,7 +28,7 @@ async def generate_gen(client_last_row: local_funcs.ClientLastRow, date_from: da
     if difference_in_years >= 1:
         yield {'client_name': client_last_row.client_name, 'vin': client_last_row.vin,
                'model': client_last_row.model, 'date_service': local_funcs.to_java_date_str(date_to),
-               'odometer': None, 'exp_work_type': 'year expired: {:.3f}'.format(difference_in_years)}
+               'odometer': -1, 'exp_work_type': 'year expired: {:.3f}'.format(difference_in_years)}
 
     if not date_to.tzinfo:
         date_to = date_to.replace(tzinfo=local_tz)
@@ -42,10 +42,3 @@ async def generate_gen(client_last_row: local_funcs.ClientLastRow, date_from: da
             yield {'client_name': client_last_row.client_name, 'vin': client_last_row.vin,
                    'model': client_last_row.model, 'date_service': local_funcs.to_java_date_str(day),
                    'odometer': new_odometer, 'exp_work_type': new_exp_work_type}
-
-        # if day >= date_from and new_exp_work_type and \
-        #         new_exp_work_type != client_last_row.exp_work_type and \
-        #         local_funcs.relevance_of_exp_work_type(client_last_row.exp_work_type, new_exp_work_type):
-        #     yield {'client_name': client_last_row.client_name, 'vin': client_last_row.vin,
-        #            'model': client_last_row.model, 'date_service': local_funcs.to_java_date_str(day),
-        #            'odometer': new_odometer, 'exp_work_type': local_funcs.calc_exp_work_type(new_odometer)}
