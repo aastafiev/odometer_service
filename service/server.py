@@ -71,13 +71,13 @@ def get_app(val_request: bool = False):
 
 
 if __name__ == '__main__':
-    logging.getLogger('asyncio').setLevel(logging.INFO)
-    logging.basicConfig(level=logging.getLevelName(SERVICE_CONFIG['other']['log_level'].upper()),
-                        format=DEFAULT_LOG_FORMAT)
-
     try:
         if len(sys.argv) > 1:
             SERVICE_CONFIG = load_cfg(os.path.abspath(sys.argv[1]))
+
+        logging.getLogger('asyncio').setLevel(logging.INFO)
+        logging.basicConfig(level=logging.getLevelName(SERVICE_CONFIG['other']['log_level'].upper()),
+                            format=DEFAULT_LOG_FORMAT)
 
         web.run_app(get_app(),
                     host=SERVICE_CONFIG['service']['host'],
