@@ -8,20 +8,17 @@ import sys
 from aiohttp import web
 from schema import Schema, Or
 
-import settings as st
+import settings
 from common.middlewares import error_middleware
 from utils.utils import load_cfg
 
 from service.handlers import handle_interpolate, handle_generate, handle_version
 
 
-SERVICE_CONFIG = load_cfg(os.path.join(st.PROJECT_DIR, 'service', 'etc', 'config.yml'))
-DEFAULT_LOG_FORMAT = '[%(levelname)1.1s %(asctime)s %(name)s %(module)s:%(lineno)d] %(message)s'
-
-
 async def on_startup(app):
-    app['months_data_lag'] = SERVICE_CONFIG['other']['months_data_lag']
-    app['months_mean_lag'] = SERVICE_CONFIG['other']['months_mean_lag']
+    config = app['CONFIG']
+    app['months_data_lag'] = config['months_data_lag']
+    app['months_mean_lag'] = config['months_mean_lag']
 
 
 async def on_cleanup(app):
@@ -39,11 +36,12 @@ def add_routes(app):
     return app
 
 
-def get_app(val_request: bool = False):
+def get_app(config: dict, val_request: bool = False):
     app = web.Application(middlewares=[error_middleware], debug=True)
 
     app['validate_request'] = val_request
-    app['__version__'] = st.__version__
+    app['__version__'] = settings.__version__
+    app['CONFIG'] = config
     if val_request:
         app['request_schema_interp'] = Schema({"data": [{"client_name": str,
                                                          "vin": str,
@@ -74,12 +72,14 @@ if __name__ == '__main__':
     try:
         if len(sys.argv) > 1:
             SERVICE_CONFIG = load_cfg(os.path.abspath(sys.argv[1]))
+        else:
+            SERVICE_CONFIG = load_cfg(os.path.join(settings.PROJECT_DIR, 'service', 'etc', 'config.yml'))
 
         logging.getLogger('asyncio').setLevel(logging.INFO)
         logging.basicConfig(level=logging.getLevelName(SERVICE_CONFIG['other']['log_level'].upper()),
-                            format=DEFAULT_LOG_FORMAT)
+                            format=settings.DEFAULT_LOG_FORMAT)
 
-        web.run_app(get_app(),
+        web.run_app(get_app(SERVICE_CONFIG['other']),
                     host=SERVICE_CONFIG['service']['host'],
                     port=SERVICE_CONFIG['service']['port'])
     except FileNotFoundError as err:

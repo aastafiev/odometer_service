@@ -5,6 +5,7 @@ from aiohttp.web_exceptions import HTTPBadRequest, HTTPOk
 from schema import Schema, Or
 
 import settings as st
+from utils.utils import load_cfg
 from service import get_app as get_my_app
 
 
@@ -25,7 +26,8 @@ class TestInterpolationModelRestAPI(AioHTTPTestCase):
                                                    "service_period": int}]})
 
     async def get_application(self):
-        return get_my_app(val_request=True)
+        service_config = load_cfg(os.path.join(st.PROJECT_DIR, 'service', 'etc', 'config.yml'))
+        return get_my_app(service_config['other'], val_request=True)
 
     @unittest_run_loop
     async def test_service_httpok_json_valid(self):
