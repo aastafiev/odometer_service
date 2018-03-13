@@ -20,8 +20,12 @@ async def generate_gen(client_last_row: local_funcs.ClientLastRow, date_from: da
         else:
             return
 
-    date_to = date_from + relativedelta(day=31) if 1 <= date_from.day <= 10 else date_from + relativedelta(months=1,
-                                                                                                           day=31)
+    if 1 <= date_from.day <= 10:
+        date_to = date_from + relativedelta(day=31)
+    else:
+        date_to = date_from + relativedelta(months=1,
+                                            day=31)
+        date_from = date_to.replace(day=1)
 
     # check year expire
     difference_in_years = (date_to - client_last_row.date_service).days / 365
